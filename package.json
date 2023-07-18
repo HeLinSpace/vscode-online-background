@@ -1,0 +1,124 @@
+{
+    "name": "background-online",
+    "displayName": "background-online",
+    "description": "Add a picture you like to cover the entire vscode..",
+    "version": "2.0.0",
+    "publisher": "helin",
+    "engines": {
+        "vscode": "^1.38.0"
+    },
+    "icon": "resources/background-online.jpeg",
+    "galleryBanner": {
+        "color": "#03385a",
+        "theme": "dark"
+    },
+    "categories": [
+        "Other"
+    ],
+    "keywords": [
+        "Background",
+        "Theme"
+    ],
+    "activationEvents": [
+        "*"
+    ],
+    "license": "ISC",
+    "main": "./out/extension",
+    "extensionKind": [
+        "ui"
+    ],
+    "contributes": {
+        "commands": [
+            {
+                "command": "extension.backgroundOnline.start",
+                "title": "background - start"
+            }
+        ],
+        "keybindings": [
+            {
+                "command": "extension.backgroundOnline.refresh",
+                "key": "ctrl+shift+f7",
+                "when": "editorTextFocus"
+            }
+        ],
+        "configuration": {
+            "title": "background-online config",
+            "properties": {
+                "backgroundOnline.opacity": {
+                    "type": "number",
+                    "maximum": 1,
+                    "minimum": 0,
+                    "default": 0.2,
+                    "description": "背景透明度(0 - 1)"
+                },
+                "backgroundOnline.nextBg": {
+                    "type": "string",
+                    "default": "",
+                    "description": "下一张壁纸地址"
+                },
+                "backgroundOnline.currentBg": {
+                    "type": "string",
+                    "default": "",
+                    "description": "当前壁纸地址"
+                },
+                "backgroundOnline.configured": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "是否完成初始化"
+                },
+                "backgroundOnline.enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "是否启用插件"
+                },
+                "backgroundOnline.autoStatus": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "每次启动时自动更换背景"
+                },
+                "backgroundOnline.category": {
+                    "type": "array",
+                    "default": [
+                        "dongman"
+                    ],
+                    "description": "壁纸类型"
+                },
+                "backgroundOnline.bgApiUrl": {
+                    "type": "string",
+                    "default": "https://tuapi.eees.cc/api.php?type=json&",
+                    "description": "壁纸api"
+                },
+                "backgroundOnline.bgImgUrlKey": {
+                    "type": "string",
+                    "default": "img",
+                    "description": "壁纸api返回值中壁纸的真实地址key"
+                },
+                "backgroundOnline.history": {
+                    "type": "array",
+                    "default": [
+                    ],
+                    "description": "使用过的壁纸"
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "vscode:uninstall": "node ./out/uninstall",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "npm run compile && node ./node_modules/vscode/bin/test",
+        "check": "tslint -p ./"
+    },
+    "devDependencies": {
+        "@types/mocha": "^5.2.7",
+        "@types/node": "^12.20.42",
+        "@types/node-fetch": "^2.6.4",
+        "typescript": "^4.5.4",
+        "vscode": "^1.1.37"
+    },
+    "dependencies": {
+        "node-fetch": "^2.6.12"
+    }
+}

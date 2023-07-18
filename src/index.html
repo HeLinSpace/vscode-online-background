@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cat Coding</title>
+    <style>
+        tr {
+            line-height: 40px;
+        }
+    </style>
+</head>
+
+<body>
+    <table style="margin: 20px;">
+        <tbody>
+            <tr>
+                <td align="right">在线壁纸插件：</td>
+                <td width="20px"></td>
+                <td>
+                    <input type="radio" onchange="handleClick(this)" name="enabled" value=true checked />
+                    <label for="meinv">开启</label>
+                    <input type="radio" onchange="handleClick(this)" name="enabled" value=false />
+                    <label for="dongman">关闭</label>
+                </td>
+            </tr>
+            <tr>
+                <td align="right">自动切换壁纸：</td>
+                <td width="20px"></td>
+                <td>
+                    <input type="radio" name="autoStatus" value=true checked />
+                    <label for="meinv">启用</label>
+                    <input type="radio" name="autoStatus" value=false />
+                    <label for="dongman">禁用</label>
+                </td>
+            </tr>
+            <tr>
+                <td align="right">壁纸类型：</td>
+                <td width="20px"></td>
+                <td>
+                    <input type="checkbox" id="meinv" name="category" value="meinv" />
+                    <label for="meinv">美女</label>
+                    <input type="checkbox" id="dongman" name="category" value="dongman" />
+                    <label for="dongman">动漫</label>
+                    <input type="checkbox" id="fengjing" name="category" value="fengjing" />
+                    <label for="fengjing">风景</label>
+                    <input type="checkbox" id="biying" name="category" value="biying" />
+                    <label for="biying">必应</label>
+                </td>
+            </tr>
+            <tr>
+                <td align="right">透明度：</td>
+                <td width="20px"></td>
+                <td>
+                    <input style="width:300px;" id="opacity" />（0~1）
+                </td>
+            </tr>
+            <tr>
+                <td align="right">当前壁纸URL：</td>
+                <td width="20px"></td>
+                <td>
+                    <input style="width:300px;" id="imagePath" readonly />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div style="display: flex;flex-direction: row;justify-content: center;margin-top: 20px;">
+                        <button onclick="getData()">保存</button>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+<script src="https://code.jquery.com/jquery-3.7.0.min.js" type="text/javascript"></script>
+<script>
+    function getData() {
+        var category = [];
+        var selectedCheckboxes = $('input[name=category]:checked');
+
+        // 遍历选中的 checkbox 元素，获取它们的值
+        selectedCheckboxes.each(function () {
+            category.push($(this).val());
+        });
+
+        var data = {
+            opacity: parseFloat($('#opacity').val()),
+            nextBg: $('#nextBg').val(),
+            autoStatus: $('input[name=autoStatus]:checked').val() === "true" ? true : false,
+            enabled: $('input[name=enabled]:checked').val()=== "true" ? true : false,
+            category
+        }
+        alert(JSON.stringify(data))
+    }
+
+    function handleClick(radio) {
+        if (radio.value === "1") {
+            $('input[name=autoStatus]').attr("disabled", false)
+            $("#meinv").attr("disabled", false)
+            $("#dongman").attr("disabled", false)
+            $("#fengjing").attr("disabled", false)
+            $("#biying").attr("disabled", false)
+            $("#opacity").attr("readOnly", false)
+        } else {
+            $('input[name=autoStatus]').attr("disabled", true)
+            $("#meinv").attr("disabled", true)
+            $("#dongman").attr("disabled", true)
+            $("#fengjing").attr("disabled", true)
+            $("#biying").attr("disabled", true)
+            $("#opacity").attr("readOnly", true)
+        }
+    }
+</script>
+
+</html>
