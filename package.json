@@ -2,10 +2,14 @@
     "name": "background-online",
     "displayName": "background-online",
     "description": "Add a picture you like to cover the entire vscode..",
-    "version": "2.0.1",
+    "version": "2.0.3",
     "publisher": "helin",
+    "signature": {
+        "type": "microsoft",
+        "version": "1.0.0"
+    },
     "engines": {
-        "vscode": "^1.38.0"
+        "vscode": "^1.85.0"
     },
     "icon": "resources/background-online.jpeg",
     "galleryBanner": {
@@ -13,19 +17,22 @@
         "theme": "dark"
     },
     "categories": [
-        "Other"
+        "Themes"
     ],
     "keywords": [
         "Background",
         "Theme"
     ],
     "activationEvents": [
-        "*"
+        "onStartupFinished"
     ],
     "license": "ISC",
     "main": "./out/extension",
     "extensionKind": [
         "ui"
+    ],
+    "files": [
+        "out/**/*"
     ],
     "contributes": {
         "commands": [
@@ -72,26 +79,48 @@
                     "description": "每次启动时自动更换背景"
                 },
                 "backgroundOnline.category": {
-                    "type": "array",
-                    "default": [
-                        "dongman"
-                    ],
-                    "description": "壁纸类型"
+                    "type": "object",
+                    "default": {
+                        "name": "动漫",
+                        "parameters": "&lx=dongman"
+                    },
+                    "description": "选择的壁纸类型"
                 },
                 "backgroundOnline.bgApiUrl": {
                     "type": "string",
-                    "default": "https://tuapi.eees.cc/api.php?type=json&",
+                    "default": "https://api.btstu.cn/sjbz/api.php?format=json",
                     "description": "壁纸api"
                 },
                 "backgroundOnline.bgImgUrlKey": {
                     "type": "string",
-                    "default": "img",
+                    "default": "imgurl",
                     "description": "壁纸api返回值中壁纸的真实地址key"
+                },
+                "backgroundOnline.categoryList": {
+                    "type": "array",
+                    "default": [
+                        {
+                            "name": "动漫",
+                            "parameters": "&lx=dongman"
+                        },
+                        {
+                            "name": "妹纸",
+                            "parameters": "&lx=meizi"
+                        },
+                        {
+                            "name": "风景",
+                            "parameters": "&lx=fengjing"
+                        },
+                        {
+                            "name": "随机",
+                            "parameters": "&lx=suiji"
+                        }
+                    ],
+                    "description": "自定义类型"
                 },
                 "backgroundOnline.history": {
                     "type": "array",
-                    "default": [
-                    ],
+                    "default": [],
                     "description": "使用过的壁纸"
                 }
             }
@@ -107,13 +136,13 @@
         "check": "tslint -p ./"
     },
     "devDependencies": {
-        "@types/mocha": "^5.2.7",
-        "@types/node": "^12.20.42",
-        "@types/node-fetch": "^2.6.4",
-        "typescript": "^4.5.4",
+        "@types/mocha": "^10.0.6",
+        "@types/node": "^20.10.6",
+        "@types/node-fetch": "^2.6.9",
+        "typescript": "^5.3.3",
         "vscode": "^1.1.37"
     },
     "dependencies": {
-        "node-fetch": "^2.6.12"
+        "node-fetch": "^2.7.0"
     }
 }

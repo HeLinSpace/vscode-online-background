@@ -2,6 +2,8 @@ import * as os from 'os';
 import * as vscode from 'vscode';
 import fetch from 'node-fetch';
 import { FileDom } from './FileDom';
+import { CategoryItem } from './CategoryItem';
+
 // import vsHelp from './vsHelp';
 
 
@@ -23,7 +25,7 @@ export class PickList {
 	private autoStatus: boolean;
 	private enabled: boolean;
 	// 壁纸类型
-	private category: Array<string>;
+	private category: CategoryItem;
 	// 壁纸历史
 	private history: Array<string>;
 	// api url
@@ -61,36 +63,38 @@ export class PickList {
 	public static saveSettings(settings: any) {
 		let config = vscode.workspace.getConfiguration('backgroundOnline');
 		var current = new PickList(config)
-
-		if (!settings.enabled) {
-			current.updateDom(true)
-			current.reload()
-		} else {
-			if (settings.opacity !== config.opacity || settings.currentBg !== config.currentBg
-				|| settings.category.toString() !== config.category.toString()) {
-				current.setConfigValue('opacity', settings.opacity);
-				current.setConfigValue('currentBg', settings.currentBg);
-				current.setConfigValue('category', settings.category);
-				current.currentBg = settings.currentBg
-				current.opacity = settings.opacity
-				current.category = settings.category
-
-				// 更新分类
-				if (settings.category.toString() !== config.category.toString() && settings.currentBg === config.currentBg) {
-					current.getRealUrl(() => {
-						current.reload()
-					});
-				}
-				// 手动替换壁纸
-				else if (settings.currentBg !== config.currentBg) {
-					current.pushHistory(config.currentBg)
-					current.currentBg = settings.currentBg
-					current.updateDom()
-					current.reload();
-				}
-			}
-
+		
+		if (settings.enabled !== config.enabled || settings.opacity !== config.opacity || settings.currentBg !== config.currentBg
+			|| settings.category.name !== config.category.name) {
+			current.setConfigValue('opacity', settings.opacity);
+			current.setConfigValue('currentBg', settings.currentBg);
+			current.setConfigValue('category', settings.category);
 			current.setConfigValue('autoStatus', settings.autoStatus);
+			
+			if (!settings.enabled) {
+				current.updateDom(true)
+				current.reload()
+				
+				return
+			}
+			
+			current.currentBg = settings.currentBg
+			current.opacity = settings.opacity
+			current.category = settings.category
+
+			// 更新分类
+			if (settings.category.name !== config.category.name && settings.currentBg === config.currentBg) {
+				current.getRealUrl(() => {
+					current.reload()
+				});
+			}
+			// 手动替换壁纸
+			else if (settings.currentBg !== config.currentBg) {
+				current.pushHistory(config.currentBg)
+				current.currentBg = settings.currentBg
+				current.updateDom()
+				current.reload();
+			}
 		}
 	}
 
@@ -128,7 +132,7 @@ export class PickList {
 	 */
 	private getRealUrl(callback: any = null) {
 
-		var url = this.bgApiUrl + "category={" + this.category.join(",") + "}";
+		var url = this.bgApiUrl + this.category.parameters;
 		try {
 			fetch(url).then(async (res: any) => {
 				var data = await res.json()

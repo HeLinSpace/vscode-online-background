@@ -1,4 +1,7 @@
-import * as vscode from 'vscode';
+import {
+	window,
+	commands,
+  } from 'vscode';
 
 const vsHelp = {
     /**
@@ -8,7 +11,7 @@ const vsHelp = {
      * @returns {Thenable<string>} 
      */
     showInfo(content: string): Thenable<string | undefined> {
-        return vscode.window.showInformationMessage(content);
+        return window.showInformationMessage(content);
     },
 
     /**
@@ -18,11 +21,19 @@ const vsHelp = {
      * @returns {Thenable<void>} 
      */
     showInfoRestart(content: any): Thenable<void> {
-        return vscode.window.showInformationMessage(content, { title: "Reload" })
+        return window.showInformationMessage(content, { title: "Reload" })
             .then(function (item) {
                 if (!item) { return; }
-                vscode.commands.executeCommand('workbench.action.reloadWindow');
+                commands.executeCommand('workbench.action.reloadWindow');
             });
+    },
+    showWebview(content: any): Thenable<void> {
+        return window.showInformationMessage(content, { title: "OK" })
+        .then(function (item) {
+            if (!item) { return; }
+            commands.executeCommand('workbench.view.extension.backgroundCover-explorer');
+        });
+        
     }
 }
 

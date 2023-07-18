@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const vscode = require("vscode");
+const vscode_1 = require("vscode");
 const vsHelp = {
     /**
      * 展示信息提示框
@@ -9,7 +9,7 @@ const vsHelp = {
      * @returns {Thenable<string>}
      */
     showInfo(content) {
-        return vscode.window.showInformationMessage(content);
+        return vscode_1.window.showInformationMessage(content);
     },
     /**
      * 提示信息并重启
@@ -18,12 +18,21 @@ const vsHelp = {
      * @returns {Thenable<void>}
      */
     showInfoRestart(content) {
-        return vscode.window.showInformationMessage(content, { title: "Reload" })
+        return vscode_1.window.showInformationMessage(content, { title: "Reload" })
             .then(function (item) {
             if (!item) {
                 return;
             }
-            vscode.commands.executeCommand('workbench.action.reloadWindow');
+            vscode_1.commands.executeCommand('workbench.action.reloadWindow');
+        });
+    },
+    showWebview(content) {
+        return vscode_1.window.showInformationMessage(content, { title: "OK" })
+            .then(function (item) {
+            if (!item) {
+                return;
+            }
+            vscode_1.commands.executeCommand('workbench.view.extension.backgroundCover-explorer');
         });
     }
 };

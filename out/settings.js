@@ -10,15 +10,15 @@ class Settings {
         // 创建和显示webview
         const panel = vscode.window.createWebviewPanel('setting', "online background setting", vscode.ViewColumn.One, {
             enableScripts: true,
-            localResourceRoots: [vscode.Uri.file(webviewDir)]
+            // 允许加载所有本地资源
+            localResourceRoots: [vscode.Uri.file(path.join(webviewDir, 'out'))]
         });
-        const jqueryPath = vscode.Uri.file(path.join(webviewDir, 'out/jquery-3.7.0.min.js'));
-        const jqueryPathSrc = jqueryPath.with({ scheme: 'vscode-resource' });
+        // 修改jQuery路径的获取方式
+        const jqueryPath = panel.webview.asWebviewUri(vscode.Uri.file(path.join(context.extensionPath, 'out', 'jquery-3.7.0.min.js')));
         // 设置HTML内容
-        panel.webview.html = Settings.getWebviewContent(jqueryPathSrc);
+        panel.webview.html = Settings.getWebviewContent(jqueryPath);
         // Handle messages from the webview
         panel.webview.onDidReceiveMessage(message => {
-            console.log(message);
             switch (message.command) {
                 case 'save':
                     var configs = JSON.parse(message.text);
@@ -29,22 +29,15 @@ class Settings {
     }
     static getWebviewContent(jqueryPathSrc) {
         let config = vscode.workspace.getConfiguration('backgroundOnline');
-        var categoryMeinv = "";
-        var categoryDongman = "";
-        var categoryFengjing = "";
-        var categoryBiying = "";
-        if (config.category.includes('meinv')) {
-            categoryMeinv = "checked";
-        }
-        if (config.category.includes('dongman')) {
-            categoryDongman = "checked";
-        }
-        if (config.category.includes('fengjing')) {
-            categoryFengjing = "checked";
-        }
-        if (config.category.includes('biying')) {
-            categoryBiying = "checked";
-        }
+        const categoryList = config.categoryList;
+        let categoryListStr = "";
+        categoryList.forEach((element) => {
+            var checked = "";
+            if (config.category.name === element.name) {
+                checked = "checked";
+            }
+            categoryListStr += `<input type="radio" name="category" value="${element.parameters}" ${checked} /><label>${element.name}</label>`;
+        });
         var enabled = "";
         var disabled = "";
         if (config.enabled == 1) {
@@ -102,14 +95,7 @@ class Settings {
 						<td align="right">壁纸类型：</td>
 						<td width="20px"></td>
 						<td>
-							<input type="checkbox" name="category" value="meinv" ${categoryMeinv} />
-							<label for="meinv">美女</label>
-							<input type="checkbox" name="category" value="dongman" ${categoryDongman} />
-							<label for="dongman">动漫</label>
-							<input type="checkbox" name="category" value="fengjing" ${categoryFengjing} />
-							<label for="fengjing">风景</label>
-							<input type="checkbox" name="category" value="biying" ${categoryBiying} />
-							<label for="biying">必应</label>
+							${categoryListStr}
 						</td>
 					</tr>
 					<tr>
@@ -140,43 +126,39 @@ class Settings {
 		<script>
 			const vscode = acquireVsCodeApi();
 			function getData() {
-				var category = [];
-				var selectedCheckboxes = $('input[name=category]:checked');
+				var category = {};
 
-				// 遍历选中的 checkbox 元素，获取它们的值
-				selectedCheckboxes.each(function () {
-					category.push($(this).val());
-				});
+				var selectedRadio = $('input[name=category]:checked');
+				if (selectedRadio.length > 0) {
+					category = {
+						name: selectedRadio.parent().text().trim(), // 获取父元素的文本内容
+						parameters: selectedRadio.val()
+					};
+				}
 
 				var data = {
 					opacity: parseFloat($('#opacity').val()),
 					currentBg: $('#currentBg').val(),
 					autoStatus: $('input[name=autoStatus]:checked').val() === "true" ? true : false,
 					enabled: $('input[name=enabled]:checked').val() === "true" ? true : false,
-					category
+					category: category
 				}
 
 				vscode.postMessage({
 					command: 'save',
 					text: JSON.stringify(data)
-				})
+				});
 			}
 			
 			function handleClick(radio) {
 				if (radio.value === "1") {
 					$('input[name=autoStatus]').attr("disabled", false)
-					$("#meinv").attr("disabled", false)
-					$("#dongman").attr("disabled", false)
-					$("#fengjing").attr("disabled", false)
-					$("#biying").attr("disabled", false)
+					$('input[name=category]').attr("disabled", false)
 					$("#opacity").attr("readOnly", false)
 					$("#currentBg").attr("readOnly", false)
 				} else {
 					$('input[name=autoStatus]').attr("disabled", true)
-					$("#meinv").attr("disabled", true)
-					$("#dongman").attr("disabled", true)
-					$("#fengjing").attr("disabled", true)
-					$("#biying").attr("disabled", true)
+					$('input[name=category]').attr("disabled", true)
 					$("#opacity").attr("readOnly", true)
 					$("#currentBg").attr("readOnly", true)
 				}

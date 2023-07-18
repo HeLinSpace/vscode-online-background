@@ -1,22 +1,45 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import version from './version';
-import * as vscode from 'vscode';
+import * as os from 'os';
+import {
+	Uri,
+	window,
+	InputBoxOptions,
+	commands,
+	env,
+  } from 'vscode';
 import { exec } from 'child_process';
+import vsHelp from './vsHelp';
 
-const cssName: string = vscode.version >= "1.38" ? 'workbench.desktop.main.css' : 'workbench.main.css';
+const cssName: string = version >= "1.38" ? 'workbench.desktop.main.css' : 'workbench.main.css';
 export class FileDom {
 
 	// 文件路径
-	private filePath = path.join(path.dirname((require.main as NodeModule).filename), 'vs', 'workbench', cssName);
+	private filePath = path.join(env.appRoot, "out", "vs", "workbench", cssName);;//path.join(path.dirname((require.main as NodeModule).filename), 'vs', 'workbench', cssName);
 	private extName = "backgroundCover";
 	private imagePath: string = '';
 	private imageOpacity: number = 1;
+	private sizeModel: string = 'cover';
 
 
-	constructor(imagePath: string, opacity: number) {
+	constructor(imagePath: string, opacity: number, sizeModel: string = 'cover') {
 		this.imagePath = imagePath;
 		this.imageOpacity = opacity;
+		if(sizeModel == ""){
+			sizeModel = "cover";
+		}
+		this.sizeModel = sizeModel;
+		if(imagePath.substr(0, 8).toLowerCase() !== 'https://'){
+			// mac对vscodefile协议支持存在异常，所以mac下使用base64
+			var osType = os.type()
+			if(osType == 'Darwin'){
+				this.imageToBase64();
+			}else{
+				this.localImgToVsc(osType);
+			}
+			
+		}
 	}
 
 
@@ -29,7 +52,14 @@ export class FileDom {
 		let newContent = this.getContent();
 		newContent = this.clearCssContent(newContent);
 		newContent += content;
-		this.saveContent(newContent);
+		try{
+			this.saveContent(newContent);
+		}catch(ex:any){
+			vsHelp.showInfo('更新背景图片异常，请确保以管理员身份运行或对该文件赋予写入权限！ / Unexpected update of background image, please make sure to run as administrator or grant write permission to the file!                        \n ' + ex.message);
+
+			return false;
+		}
+		
 		return true;
 	}
 
@@ -39,14 +69,59 @@ export class FileDom {
 		let opacity = this.imageOpacity;
 		opacity = opacity <= 0.1 ? 0.1 : opacity >= 1 ? 1 : opacity;
 		opacity = 0.59 + (0.4 - ((opacity * 4) / 10));
+		
+		// 图片填充方式
+		let sizeModelVal = this.sizeModel;
+		let repeatVal    = "no-repeat";
+		let positionVal  = "center";
+		switch(this.sizeModel){
+			case "cover":
+				sizeModelVal = "cover";
+				break;
+			case "contain":
+				sizeModelVal = "100% 100%";
+				break;
+			case "repeat":
+				sizeModelVal = "auto";
+				repeatVal = "repeat";
+				break;
+			case "not_center":
+				sizeModelVal = "auto";
+				break;
+			case "not_right_bottom":
+				sizeModelVal = "auto";
+				positionVal = "right 96%";
+				break;
+			case "not_right_top":
+				sizeModelVal = "auto";
+				positionVal = "right 30px";
+				break;
+			case "not_left":
+				sizeModelVal = "auto";
+				positionVal = "left";
+				break;
+			case "not_right":
+				sizeModelVal = "auto";
+				positionVal = "right";
+				break;
+			case "not_top":
+				sizeModelVal = "auto";
+				positionVal = "top";
+				break;
+			case "not_bottom":
+				sizeModelVal = "auto";
+				positionVal = "bottom";
+				break;
+				
+		}
 
 		return `
 		/*ext-${this.extName}-start*/
 		/*ext.${this.extName}.ver.${version}*/
 		body{
-			background-size: cover;
-			background-repeat: no-repeat;
-			background-position: center;
+			background-size: ${sizeModelVal};
+			background-repeat: ${repeatVal};
+			background-position: ${positionVal};
 			opacity:${opacity};
 			background-image:url('${this.imagePath}');
 		}
@@ -59,7 +134,7 @@ export class FileDom {
     * 获取文件内容
     * @var mixed
     */
-	 public getContent(): string {
+	private getContent(): string {
 		return fs.readFileSync(this.filePath, 'utf-8');
 	}
 
@@ -79,6 +154,14 @@ export class FileDom {
 		
 		return true;
 	}
+
+
+    private localImgToVsc(ostype: string) {
+		var separator = ostype == "Linux" ? "" : "/";
+		
+		var url =  "vscode-file://vscode-app" + separator + this.imagePath
+		this.imagePath = Uri.parse(url).toString();
+    }
 
 	/**
     * 设置文件内容
@@ -116,7 +199,6 @@ export class FileDom {
 			this.saveContent(content);
 			return true;
 		} catch (ex) {
-			//console.log(ex);
 			return false;
 		}
 	}
@@ -134,17 +216,16 @@ export class FileDom {
         newContent += content;
         fs.writeFile(this.filePath, newContent, { encoding: 'utf-8' }, (error) => {
             if (error) {
-                // console.log('EACCES: permission denied', error?.message);
                 // 对文件没有读写权限则提示输入管理员密码以继续写入样式
-                let option: vscode.InputBoxOptions = {
+                let option: InputBoxOptions = {
                     ignoreFocusOut: true,
                     password: false,
                     placeHolder: 'Please enter the root password for access / 请输入 ROOT 密码用于获取权限',
                     prompt: '请输入管理员密码',
                 }
-                vscode.window.showInputBox(option).then((value) => {
+                window.showInputBox(option).then((value) => {
                     if (!value) {
-                        vscode.window.showWarningMessage(
+                        window.showWarningMessage(
                             'Please enter password / 请输入密码！'
                         );
                         return;
@@ -168,15 +249,14 @@ export class FileDom {
         exec(
             `echo "${password}" | sudo -S chmod a+rwx "${this.filePath}"`,
             (error) => {
-                // console.log('Chmod error:', error?.message);
                 if (error) {
-                    vscode.window.showWarningMessage(
+                    window.showWarningMessage(
                         `${error.name}: 密码可能输入有误，请重新尝试！`
                     );
                 }
                 // 写入样式并自动重启程序
                 fs.writeFileSync(this.filePath, content, 'utf-8');
-                vscode.commands.executeCommand('workbench.action.reloadWindow');
+                commands.executeCommand('workbench.action.reloadWindow');
             }
         );
     }

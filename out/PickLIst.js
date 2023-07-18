@@ -44,34 +44,33 @@ class PickList {
     static saveSettings(settings) {
         let config = vscode.workspace.getConfiguration('backgroundOnline');
         var current = new PickList(config);
-        if (!settings.enabled) {
-            current.updateDom(true);
-            current.reload();
-        }
-        else {
-            if (settings.opacity !== config.opacity || settings.currentBg !== config.currentBg
-                || settings.category.toString() !== config.category.toString()) {
-                current.setConfigValue('opacity', settings.opacity);
-                current.setConfigValue('currentBg', settings.currentBg);
-                current.setConfigValue('category', settings.category);
-                current.currentBg = settings.currentBg;
-                current.opacity = settings.opacity;
-                current.category = settings.category;
-                // 更新分类
-                if (settings.category.toString() !== config.category.toString() && settings.currentBg === config.currentBg) {
-                    current.getRealUrl(() => {
-                        current.reload();
-                    });
-                }
-                // 手动替换壁纸
-                else if (settings.currentBg !== config.currentBg) {
-                    current.pushHistory(config.currentBg);
-                    current.currentBg = settings.currentBg;
-                    current.updateDom();
-                    current.reload();
-                }
-            }
+        if (settings.enabled !== config.enabled || settings.opacity !== config.opacity || settings.currentBg !== config.currentBg
+            || settings.category.name !== config.category.name) {
+            current.setConfigValue('opacity', settings.opacity);
+            current.setConfigValue('currentBg', settings.currentBg);
+            current.setConfigValue('category', settings.category);
             current.setConfigValue('autoStatus', settings.autoStatus);
+            if (!settings.enabled) {
+                current.updateDom(true);
+                current.reload();
+                return;
+            }
+            current.currentBg = settings.currentBg;
+            current.opacity = settings.opacity;
+            current.category = settings.category;
+            // 更新分类
+            if (settings.category.name !== config.category.name && settings.currentBg === config.currentBg) {
+                current.getRealUrl(() => {
+                    current.reload();
+                });
+            }
+            // 手动替换壁纸
+            else if (settings.currentBg !== config.currentBg) {
+                current.pushHistory(config.currentBg);
+                current.currentBg = settings.currentBg;
+                current.updateDom();
+                current.reload();
+            }
         }
     }
     reload(message = '壁纸配置完成，重新加载生效？') {
@@ -104,7 +103,7 @@ class PickList {
      * @param callback
      */
     getRealUrl(callback = null) {
-        var url = this.bgApiUrl + "category={" + this.category.join(",") + "}";
+        var url = this.bgApiUrl + this.category.parameters;
         try {
             (0, node_fetch_1.default)(url).then((res) => __awaiter(this, void 0, void 0, function* () {
                 var data = yield res.json();
@@ -124,6 +123,7 @@ class PickList {
             }));
         }
         catch (_a) {
+            debugger;
             vscode.window.showWarningMessage('获取图片地址失败');
         }
     }
