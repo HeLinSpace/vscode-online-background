@@ -28,13 +28,13 @@ class PickList {
             current.setConfigValue('configured', true);
             current.setConfigValue('autoStatus', true);
             current.setConfigValue('enabled', true);
-            current.getRealUrl(1, () => {
+            current.getRealUrl(() => {
                 current.reload();
             });
         }
         else {
             if (current.enabled && current.autoStatus) {
-                current.getRealUrl(1);
+                current.getRealUrl();
             }
         }
     }
@@ -59,14 +59,14 @@ class PickList {
                 current.category = settings.category;
                 // 更新分类
                 if (settings.category.toString() !== config.category.toString() && settings.currentBg === config.currentBg) {
-                    current.getRealUrl(2, () => {
+                    current.getRealUrl(() => {
                         current.reload();
                     });
                 }
                 // 手动替换壁纸
                 else if (settings.currentBg !== config.currentBg) {
                     current.pushHistory(config.currentBg);
-                    current.nextBg = settings.currentBg;
+                    current.currentBg = settings.currentBg;
                     current.updateDom();
                     current.reload();
                 }
@@ -90,7 +90,6 @@ class PickList {
     constructor(config) {
         this.config = config;
         this.enabled = config.enabled;
-        this.nextBg = config.nextBg;
         this.opacity = config.opacity;
         this.history = config.history;
         this.currentBg = config.currentBg;
@@ -102,10 +101,9 @@ class PickList {
     }
     /**
      *
-     * @param scene 1 自动更新 2 手动设置更新
      * @param callback
      */
-    getRealUrl(scene, callback = null) {
+    getRealUrl(callback = null) {
         var url = this.bgApiUrl + "category={" + this.category.join(",") + "}";
         try {
             (0, node_fetch_1.default)(url).then((res) => __awaiter(this, void 0, void 0, function* () {
@@ -113,24 +111,8 @@ class PickList {
                 if (data && data[this.bgImgUrlKey]) {
                     this.pushHistory(this.currentBg);
                     var imageUrl = data[this.bgImgUrlKey];
-                    var currentBg = this.currentBg;
-                    switch (scene) {
-                        case 1:
-                            if (!this.nextBg || !currentBg) {
-                                this.setConfigValue('currentBg', imageUrl);
-                            }
-                            else {
-                                this.setConfigValue('currentBg', this.nextBg);
-                            }
-                            this.nextBg = imageUrl;
-                            this.setConfigValue('nextBg', this.nextBg);
-                            break;
-                        case 2:
-                            this.nextBg = imageUrl;
-                            this.setConfigValue('currentBg', imageUrl);
-                            this.setConfigValue('nextBg', '');
-                            break;
-                    }
+                    this.setConfigValue('currentBg', imageUrl);
+                    this.currentBg = imageUrl;
                     this.updateDom();
                     if (callback) {
                         callback();
@@ -160,7 +142,7 @@ class PickList {
     }
     // 更新、卸载css
     updateDom(uninstall = false) {
-        let dom = new FileDom_1.FileDom(this.nextBg, this.opacity);
+        let dom = new FileDom_1.FileDom(this.currentBg, this.opacity);
         if (uninstall) {
             dom.uninstall();
         }

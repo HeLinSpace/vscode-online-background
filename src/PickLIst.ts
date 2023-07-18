@@ -11,9 +11,6 @@ export class PickList {
 	// 当前配置
 	private config: vscode.WorkspaceConfiguration;
 
-	// 下一张壁纸
-	private nextBg: string;
-
 	// 当前配置的背景图透明度
 	private opacity: number;
 
@@ -48,12 +45,12 @@ export class PickList {
 			current.setConfigValue('autoStatus', true);
 			current.setConfigValue('enabled', true);
 
-			current.getRealUrl(1, () => {
+			current.getRealUrl(() => {
 				current.reload()
 			});
 		} else {
 			if (current.enabled && current.autoStatus) {
-				current.getRealUrl(1);
+				current.getRealUrl();
 			}
 		}
 	}
@@ -80,14 +77,14 @@ export class PickList {
 
 				// 更新分类
 				if (settings.category.toString() !== config.category.toString() && settings.currentBg === config.currentBg) {
-					current.getRealUrl(2, () => {
+					current.getRealUrl(() => {
 						current.reload()
 					});
 				}
 				// 手动替换壁纸
 				else if (settings.currentBg !== config.currentBg) {
 					current.pushHistory(config.currentBg)
-					current.nextBg = settings.currentBg
+					current.currentBg = settings.currentBg
 					current.updateDom()
 					current.reload();
 				}
@@ -114,7 +111,6 @@ export class PickList {
 	private constructor(config: vscode.WorkspaceConfiguration) {
 		this.config = config;
 		this.enabled = config.enabled;
-		this.nextBg = config.nextBg;
 		this.opacity = config.opacity;
 		this.history = config.history;
 
@@ -128,10 +124,9 @@ export class PickList {
 
 	/**
 	 * 
-	 * @param scene 1 自动更新 2 手动设置更新
 	 * @param callback 
 	 */
-	private getRealUrl(scene: Number, callback: any = null) {
+	private getRealUrl(callback: any = null) {
 
 		var url = this.bgApiUrl + "category={" + this.category.join(",") + "}";
 		try {
@@ -141,24 +136,8 @@ export class PickList {
 					this.pushHistory(this.currentBg)
 
 					var imageUrl = data[this.bgImgUrlKey]
-					var currentBg = this.currentBg
-
-					switch (scene) {
-						case 1:
-							if (!this.nextBg || !currentBg) {
-								this.setConfigValue('currentBg', imageUrl);
-							} else {
-								this.setConfigValue('currentBg', this.nextBg);
-							}
-							this.nextBg = imageUrl
-							this.setConfigValue('nextBg', this.nextBg);
-							break;
-						case 2:
-							this.nextBg = imageUrl
-							this.setConfigValue('currentBg', imageUrl);
-							this.setConfigValue('nextBg', '');
-							break;
-					}
+					this.setConfigValue('currentBg', imageUrl);
+					this.currentBg = imageUrl
 
 					this.updateDom()
 					if (callback) {
@@ -190,7 +169,7 @@ export class PickList {
 
 	// 更新、卸载css
 	private updateDom(uninstall: boolean = false) {
-		let dom: FileDom = new FileDom(this.nextBg, this.opacity);
+		let dom: FileDom = new FileDom(this.currentBg, this.opacity);
 		if (uninstall) {
 			dom.uninstall();
 		} else {

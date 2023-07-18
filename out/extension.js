@@ -17,14 +17,7 @@ function activate(context) {
     settingBtn.command = 'extension.backgroundOnline.setting';
     settingBtn.tooltip = '壁纸设置';
     settingBtn.show();
-    // 快捷切换壁纸
-    let refreshBtn = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
-    refreshBtn.text = '$(sync)';
-    refreshBtn.command = 'workbench.action.reloadWindow';
-    refreshBtn.tooltip = '下一张（自动重启）';
-    refreshBtn.show();
     let currentPanel = undefined;
-    // let randomCommand = vscode.commands.registerCommand('extension.backgroundCover.refresh', () => { PickList.randomUpdateBackground(); });
     let startCommand = vscode.commands.registerCommand('extension.backgroundOnline.setting', () => {
         const columnToShowIn = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : undefined;
         if (currentPanel) {
@@ -36,7 +29,6 @@ function activate(context) {
         }
     });
     context.subscriptions.push(startCommand);
-    // context.subscriptions.push(randomCommand);
 }
 exports.activate = activate;
 // this method is called when your extension is deactivated

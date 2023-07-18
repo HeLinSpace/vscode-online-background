@@ -8,7 +8,7 @@ class Settings {
     static getPanel(context) {
         const webviewDir = context.extensionPath;
         // 创建和显示webview
-        const panel = vscode.window.createWebviewPanel('setting', "setting", vscode.ViewColumn.One, {
+        const panel = vscode.window.createWebviewPanel('setting', "online background setting", vscode.ViewColumn.One, {
             enableScripts: true,
             localResourceRoots: [vscode.Uri.file(webviewDir)]
         });
@@ -42,7 +42,7 @@ class Settings {
         if (config.category.includes('fengjing')) {
             categoryFengjing = "checked";
         }
-        if (config.category.includes('meinv')) {
+        if (config.category.includes('biying')) {
             categoryBiying = "checked";
         }
         var enabled = "";

@@ -2,7 +2,7 @@
     "name": "background-online",
     "displayName": "background-online",
     "description": "Add a picture you like to cover the entire vscode..",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "publisher": "helin",
     "engines": {
         "vscode": "^1.38.0"
@@ -50,11 +50,6 @@
                     "minimum": 0,
                     "default": 0.2,
                     "description": "背景透明度(0 - 1)"
-                },
-                "backgroundOnline.nextBg": {
-                    "type": "string",
-                    "default": "",
-                    "description": "下一张壁纸地址"
                 },
                 "backgroundOnline.currentBg": {
                     "type": "string",
