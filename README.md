@@ -38,8 +38,8 @@ So, a information appears while the first time to install or vscode update.U can
 <br/>
 <table>
     <tr>
-        <td align="center"><img src="https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/d0661cf003f22609bec757554a80c358247898d4/resources/weixin.jpg" width="300"></td>
-        <td align="center"><img src="https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/d0661cf003f22609bec757554a80c358247898d4/resources/zhifubao.jpg" width="300"></td>
+        <td align="center"><img src="https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/master/resources/weixin.jpg" width="300"></td>
+        <td align="center"><img src="https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/master/resources/zhifubao.jpg" width="300"></td>
     </tr>
 </table>
 </p>
