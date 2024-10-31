@@ -177,7 +177,6 @@ class FileDom {
             return true;
         }
         catch (ex) {
-            //console.log(ex);
             return false;
         }
     }
@@ -194,7 +193,6 @@ class FileDom {
         newContent += content;
         fs.writeFile(this.filePath, newContent, { encoding: 'utf-8' }, (error) => {
             if (error) {
-                // console.log('EACCES: permission denied', error?.message);
                 // 对文件没有读写权限则提示输入管理员密码以继续写入样式
                 let option = {
                     ignoreFocusOut: true,

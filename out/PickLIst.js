@@ -123,7 +123,6 @@ class PickList {
             }));
         }
         catch (_a) {
-            debugger;
             vscode.window.showWarningMessage('获取图片地址失败');
         }
     }
