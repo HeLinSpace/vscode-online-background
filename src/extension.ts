@@ -28,7 +28,15 @@ export function activate(context: vscode.ExtensionContext) {
 				// 如果我们已经有了一个面板，那就把它显示到目标列布局中
 				currentPanel.reveal(columnToShowIn);
 			} else {
-				Settings.getPanel(context);
+				currentPanel = Settings.getPanel(context);
+				// 监听面板关闭事件
+				currentPanel.onDidDispose(
+					() => {
+						currentPanel = undefined;
+					},
+					null,
+					context.subscriptions
+				);
 			}
 		});
 	context.subscriptions.push(startCommand);

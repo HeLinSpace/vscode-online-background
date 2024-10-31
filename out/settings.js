@@ -8,17 +8,17 @@ class Settings {
     static getPanel(context) {
         const webviewDir = context.extensionPath;
         // 创建和显示webview
-        const panel = vscode.window.createWebviewPanel('setting', "online background setting", vscode.ViewColumn.One, {
+        Settings.panel = vscode.window.createWebviewPanel('setting', "online background setting", vscode.ViewColumn.One, {
             enableScripts: true,
             // 允许加载所有本地资源
             localResourceRoots: [vscode.Uri.file(path.join(webviewDir, 'out'))]
         });
         // 修改jQuery路径的获取方式
-        const jqueryPath = panel.webview.asWebviewUri(vscode.Uri.file(path.join(context.extensionPath, 'out', 'jquery-3.7.0.min.js')));
+        const jqueryPath = Settings.panel.webview.asWebviewUri(vscode.Uri.file(path.join(context.extensionPath, 'out', 'jquery-3.7.0.min.js')));
         // 设置HTML内容
-        panel.webview.html = Settings.getWebviewContent(jqueryPath);
+        Settings.panel.webview.html = Settings.getWebviewContent(jqueryPath);
         // Handle messages from the webview
-        panel.webview.onDidReceiveMessage(message => {
+        Settings.panel.webview.onDidReceiveMessage(message => {
             switch (message.command) {
                 case 'save':
                     var configs = JSON.parse(message.text);
@@ -26,6 +26,10 @@ class Settings {
                     return;
             }
         }, undefined, context.subscriptions);
+        Settings.panel.onDidDispose(() => {
+            Settings.panel = undefined;
+        });
+        return Settings.panel;
     }
     static getWebviewContent(jqueryPathSrc) {
         let config = vscode.workspace.getConfiguration('backgroundOnline');
