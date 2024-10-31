@@ -7,6 +7,8 @@
 <img src="https://img.shields.io/github/stars/HeLinSpace/vscode-online-background" alt="stars">
 </a>
 
+</p>
+
 设置
 <br/>
 ![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/ed1598b6ddb4567096db9b293468b37d0d1b93fc/resources/setting_20230718140813.png)
