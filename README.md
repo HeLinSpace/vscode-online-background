@@ -7,13 +7,20 @@
 <img src="https://img.shields.io/github/stars/HeLinSpace/vscode-online-background" alt="stars">
 </a>
 
+</p>
+修改背景API
+<br/>
+![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/e044e9985eea3024a882dd978944329e1cfaca22/resources/api_settings1.png)
+![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/e044e9985eea3024a882dd978944329e1cfaca22/resources/api_settings2.png)
+<br/>
+
 设置
 <br/>
-![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/ed1598b6ddb4567096db9b293468b37d0d1b93fc/resources/setting_20230718140813.png)
+![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/e044e9985eea3024a882dd978944329e1cfaca22/resources/setting_20230718140813.png)
 <br/>
-<br/>
+
 settings.json
-![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/ed1598b6ddb4567096db9b293468b37d0d1b93fc/resources/setting_json_20230718141150.png)
+![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/e044e9985eea3024a882dd978944329e1cfaca22/resources/setting_json_20230718141150.png)
 
 <br/>
 
@@ -23,6 +30,14 @@ Warns 警告：
 
 This extension works by editting the vscode's css file.
 So, a information appears while the first time to install or vscode update.U can click the [never show again] to avoid it.
+
+<br/>
+<br/>
+请作者喝一杯咖啡吧~
+
+<br/>
+![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/e044e9985eea3024a882dd978944329e1cfaca22/resources/zhifubao.jpeg)
+![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/e044e9985eea3024a882dd978944329e1cfaca22/resources/weixin.jpeg)
 
 </p>
 
