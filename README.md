@@ -1,8 +1,8 @@
 设置
-![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/e47645341072928426f97d5b9a47941363e6b60e/resources/setting_20230718140813.png)
+![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/ed1598b6ddb4567096db9b293468b37d0d1b93fc/resources/setting_20230718140813.png)
 
-历史壁纸
-![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/e47645341072928426f97d5b9a47941363e6b60e/resources/setting_json_20230718141150.png)
+设置json
+![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/ed1598b6ddb4567096db9b293468b37d0d1b93fc/resources/setting_json_20230718141150.png)
 
 Warns 警告：
 本插件是通过修改 vscode 的 css 文件的方式运行
