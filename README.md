@@ -10,15 +10,16 @@
 </p>
 修改背景API
 <br/>
-![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/e044e9985eea3024a882dd978944329e1cfaca22/resources/api_settings1.png)
-![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/e044e9985eea3024a882dd978944329e1cfaca22/resources/api_settings2.png)
+
+![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/d0661cf003f22609bec757554a80c358247898d4/resources/api_settings1.png)
+<br/>
+![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/d0661cf003f22609bec757554a80c358247898d4/resources/api_settings2.png)
 <br/>
 
 设置
 <br/>
 ![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/e044e9985eea3024a882dd978944329e1cfaca22/resources/setting_20230718140813.png)
 <br/>
-
 settings.json
 ![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/e044e9985eea3024a882dd978944329e1cfaca22/resources/setting_json_20230718141150.png)
 
@@ -34,10 +35,11 @@ So, a information appears while the first time to install or vscode update.U can
 <br/>
 <br/>
 请作者喝一杯咖啡吧~
-
 <br/>
-![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/e044e9985eea3024a882dd978944329e1cfaca22/resources/zhifubao.jpeg)
-![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/e044e9985eea3024a882dd978944329e1cfaca22/resources/weixin.jpeg)
+
+![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/d0661cf003f22609bec757554a80c358247898d4/resources/weixin.jpg)
+<br/>
+![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/d0661cf003f22609bec757554a80c358247898d4/resources/zhifubao.jpg)
 
 </p>
 
