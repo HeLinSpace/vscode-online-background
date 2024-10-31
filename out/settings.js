@@ -19,6 +19,7 @@ class Settings {
         Settings.panel.webview.html = Settings.getWebviewContent(jqueryPath);
         // Handle messages from the webview
         Settings.panel.webview.onDidReceiveMessage(message => {
+            debugger;
             switch (message.command) {
                 case 'save':
                     var configs = JSON.parse(message.text);
@@ -32,16 +33,53 @@ class Settings {
         return Settings.panel;
     }
     static getWebviewContent(jqueryPathSrc) {
+        var _a, _b, _c;
         let config = vscode.workspace.getConfiguration('backgroundOnline');
-        const categoryList = config.categoryList;
+        const imageSource = config.imageSource;
+        let currentSource = config.currentSource;
+        if (!currentSource && imageSource.length > 0) {
+            currentSource = {
+                sourceName: imageSource[0].sourceName,
+                parameters: imageSource[0].parameters,
+                baseUrl: imageSource[0].baseUrl,
+                imgUrlKey: imageSource[0].imgUrlKey,
+                category: ((_b = (_a = imageSource[0].category) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.name) || ""
+            };
+        }
+        let imageSourceStr = '<select id="imageSource" style="width:300px;" onchange="handleSourceChange(this)">';
+        imageSource.forEach((element) => {
+            const selected = currentSource.sourceName === element.sourceName ? 'selected="selected"' : '';
+            imageSourceStr += `<option value="${element.sourceName}" ${selected}>${element.sourceName}</option>`;
+        });
+        imageSourceStr += '</select>';
         let categoryListStr = "";
-        categoryList.forEach((element) => {
+        const categoryList = ((_c = imageSource.find((source) => source.sourceName === currentSource.sourceName)) === null || _c === void 0 ? void 0 : _c.category) || [];
+        categoryList.forEach((element, index) => {
             var checked = "";
-            if (config.category.name === element.name) {
-                checked = "checked";
+            if (currentSource.category) {
+                // 如果存在 category，按原逻辑匹配
+                if (currentSource.category === element.name) {
+                    checked = "checked";
+                }
+            }
+            else {
+                // 如果不存在 category，选中第一个
+                if (index === 0) {
+                    checked = "checked";
+                }
             }
             categoryListStr += `<input type="radio" name="category" value="${element.parameters}" ${checked} /><label>${element.name}</label>`;
         });
+        let categoryListTrStr = '<tr id="categoryList_tr"></tr>';
+        if (categoryListStr) {
+            categoryListTrStr = `<tr id="categoryList_tr">
+									<td align="right">壁纸类型：</td>
+									<td width="20px"></td>
+									<td id="categoryList_td">
+										${categoryListStr}
+									</td>
+								</tr>`;
+        }
         var enabled = "";
         var disabled = "";
         if (config.enabled == 1) {
@@ -96,12 +134,13 @@ class Settings {
 						</td>
 					</tr>
 					<tr>
-						<td align="right">壁纸类型：</td>
+						<td align="right">壁纸源：</td>
 						<td width="20px"></td>
 						<td>
-							${categoryListStr}
+							${imageSourceStr}
 						</td>
 					</tr>
+					${categoryListTrStr}
 					<tr>
 						<td align="right">透明度：</td>
 						<td width="20px"></td>
@@ -113,7 +152,7 @@ class Settings {
 						<td align="right">当前壁纸：</td>
 						<td width="20px"></td>
 						<td>
-							<input style="width:300px;" id="currentBg" value='${config.currentBg}' />
+							<input style="width:300px;" readonly id="currentBg" value='${config.currentBg}' />
 						</td>
 					</tr>
 					<tr>
@@ -128,24 +167,63 @@ class Settings {
 		</body>
 		<script src="${jqueryPathSrc}" type="text/javascript"></script>
 		<script>
+			const imageSource = ${JSON.stringify(config.imageSource)};
 			const vscode = acquireVsCodeApi();
-			function getData() {
-				var category = {};
+			function handleSourceChange(select) {
+				const selectedValue = select.value;
+				const selectedSource = imageSource.find(source => source.sourceName === selectedValue);
+				
 
+				// 生成新的 radio HTML
+				let categoryHtml = '';
+					
+				if (selectedSource && selectedSource.category && selectedSource.category.length > 0) {
+					selectedSource.category.forEach((cat, index) => {
+						// 第一个选项添加 checked 属性
+						const checked = index === 0 ? 'checked' : '';
+						categoryHtml += \`<input type="radio" name="category" value="\${cat.parameters}" \${checked} /><label>\${cat.name}</label>\`;
+					});
+
+					categoryHtml = \`<td align="right">壁纸类型：</td><td width="20px"></td><td id="categoryList_td">\${categoryHtml}</td>\`
+				}
+				
+				// 更新 categoryList_td 的内容
+				const categoryTr = document.getElementById('categoryList_tr');
+				if (categoryTr) {
+					categoryTr.innerHTML = categoryHtml;
+				}
+			}
+
+			function getData() {
+				var currentSource = {
+                        "sourceName": "",
+                        "baseUrl": "",
+                        "imgUrlKey": "",
+                        "category": "",
+                        "parameters": ""
+                    };
+				
+				// 获取选中的 source
+				var selectedValue = $('#imageSource option:selected').val();
+
+				var selectedSourceObj = imageSource.find(source => source.sourceName === selectedValue);
+				if (selectedSourceObj){
+					currentSource.sourceName = selectedSourceObj.sourceName
+					currentSource.baseUrl = selectedSourceObj.baseUrl
+					currentSource.imgUrlKey = selectedSourceObj.imgUrlKey
+				}
+				
 				var selectedRadio = $('input[name=category]:checked');
 				if (selectedRadio.length > 0) {
-					category = {
-						name: selectedRadio.parent().text().trim(), // 获取父元素的文本内容
-						parameters: selectedRadio.val()
-					};
+					currentSource.category = selectedRadio.next().text().trim()
+					currentSource.parameters = selectedRadio.val()
 				}
 
 				var data = {
 					opacity: parseFloat($('#opacity').val()),
-					currentBg: $('#currentBg').val(),
 					autoStatus: $('input[name=autoStatus]:checked').val() === "true" ? true : false,
 					enabled: $('input[name=enabled]:checked').val() === "true" ? true : false,
-					category: category
+					currentSource: currentSource
 				}
 
 				vscode.postMessage({
@@ -155,17 +233,21 @@ class Settings {
 			}
 			
 			function handleClick(radio) {
-				if (radio.value === "1") {
-					$('input[name=autoStatus]').attr("disabled", false)
-					$('input[name=category]').attr("disabled", false)
-					$("#opacity").attr("readOnly", false)
-					$("#currentBg").attr("readOnly", false)
-				} else {
-					$('input[name=autoStatus]').attr("disabled", true)
-					$('input[name=category]').attr("disabled", true)
-					$("#opacity").attr("readOnly", true)
-					$("#currentBg").attr("readOnly", true)
-				}
+				const isEnabled = radio.value === "true";  // 改用布尔值判断
+				const elements = [
+					$('input[name=autoStatus]'),
+					$('select[name=imageSource]'),
+					$('input[name=category]'),
+					$('#opacity')
+				];
+				
+				elements.forEach(el => {
+					if (el.is('input[type=number]')) {
+						el.prop('readOnly', !isEnabled);
+					} else {
+						el.prop('disabled', !isEnabled);
+					}
+				});
 			}
 		</script>
 		

@@ -1,13 +1,19 @@
 /**
- * imgItem / 图片List类
+ * CategoryItem
  */
 export class CategoryItem {
 
-	name: string;
+	sourceName: string;
+	baseUrl: string;
+	imgUrlKey: string;
+	category: string;
 	parameters: string;
 
-	constructor(name: string, parameters: string) {
-		this.name = name;
+	constructor(sourceName: string, baseUrl: string, imgUrlKey: string, category: string, parameters: string) {
+		this.sourceName = sourceName;
+		this.baseUrl = baseUrl;
+		this.imgUrlKey = imgUrlKey;
+		this.category = category;
 		this.parameters = parameters;
 	}
 }

@@ -17,7 +17,7 @@ export class FileDom {
 
 	// 文件路径
 	private filePath = path.join(env.appRoot, "out", "vs", "workbench", cssName);;//path.join(path.dirname((require.main as NodeModule).filename), 'vs', 'workbench', cssName);
-	private extName = "backgroundCover";
+	private extName = "backgroundOnline";
 	private imagePath: string = '';
 	private imageOpacity: number = 1;
 	private sizeModel: string = 'cover';

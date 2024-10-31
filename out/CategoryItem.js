@@ -2,11 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CategoryItem = void 0;
 /**
- * imgItem / 图片List类
+ * CategoryItem
  */
 class CategoryItem {
-    constructor(name, parameters) {
-        this.name = name;
+    constructor(sourceName, baseUrl, imgUrlKey, category, parameters) {
+        this.sourceName = sourceName;
+        this.baseUrl = baseUrl;
+        this.imgUrlKey = imgUrlKey;
+        this.category = category;
         this.parameters = parameters;
     }
 }

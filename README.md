@@ -1,4 +1,5 @@
 <p align="center">
+
 支持自定义api地址（JSON格式）,指定json中图片地址key即可自动访问api在线壁纸切换
 <br/>
 祝您有个愉快的心情..
@@ -7,21 +8,25 @@
 <img src="https://img.shields.io/github/stars/HeLinSpace/vscode-online-background" alt="stars">
 </a>
 
+内置壁纸源，不定期更新数据源文件
+<br/>
+![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/master/resources/source_update.png)
+
 </p>
 修改背景API
 <br/>
 
-![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/d0661cf003f22609bec757554a80c358247898d4/resources/api_settings1.png)
+![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/master/resources/api_settings1.png)
 <br/>
-![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/d0661cf003f22609bec757554a80c358247898d4/resources/api_settings2.png)
+![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/master/resources/api_settings2.png)
 <br/>
 
 设置
 <br/>
-![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/e044e9985eea3024a882dd978944329e1cfaca22/resources/setting_20230718140813.png)
+![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/master/resources/setting_20230718140813.png)
 <br/>
 settings.json
-![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/e044e9985eea3024a882dd978944329e1cfaca22/resources/setting_json_20230718141150.png)
+![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/master/resources/setting_json_20230718141150.png)
 
 <br/>
 

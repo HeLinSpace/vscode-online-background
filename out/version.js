@@ -6,5 +6,5 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @Date: 2022-01-24 19:06:34
  * @FilePath: \vscode-background-cover-online\src\version.ts
  */
-exports.default = '2.0.3';
+exports.default = '2.0.5';
 //# sourceMappingURL=version.js.map

@@ -14,7 +14,7 @@ class FileDom {
     constructor(imagePath, opacity, sizeModel = 'cover') {
         // 文件路径
         this.filePath = path.join(vscode_1.env.appRoot, "out", "vs", "workbench", cssName);
-        this.extName = "backgroundCover";
+        this.extName = "backgroundOnline";
         this.imagePath = '';
         this.imageOpacity = 1;
         this.sizeModel = 'cover';

@@ -14,8 +14,23 @@ const os = require("os");
 const vscode = require("vscode");
 const node_fetch_1 = require("node-fetch");
 const FileDom_1 = require("./FileDom");
+const InitConfig_1 = require("./InitConfig");
 // import vsHelp from './vsHelp';
 class PickList {
+    // 列表构造方法
+    constructor(config) {
+        this.config = config;
+        this.enabled = config.enabled;
+        this.opacity = config.opacity;
+        this.history = config.history;
+        this.currentBg = config.currentBg;
+        this.configured = config.configured;
+        this.autoStatus = config.autoStatus;
+        this.currentSource = config.currentSource;
+        this.sourceVersion = config.sourceVersion;
+        this.sourceUrl = config.sourceUrl;
+        this.checkSourceVersion = config.checkSourceVersion;
+    }
     /**
      *  自动更新背景
      */
@@ -23,17 +38,26 @@ class PickList {
         let config = vscode.workspace.getConfiguration('backgroundOnline');
         var current = new PickList(config);
         if (!current.configured) {
-            // 更新变量
-            current.setConfigValue('opacity', 0.7);
-            current.setConfigValue('configured', true);
-            current.setConfigValue('autoStatus', true);
-            current.setConfigValue('enabled', true);
+            // 初始化配置
+            const initConfig = (0, InitConfig_1.getInitConfig)();
+            current.setConfigValue('opacity', initConfig.opacity);
+            current.setConfigValue('configured', initConfig.configured);
+            current.setConfigValue('autoStatus', initConfig.autoStatus);
+            current.setConfigValue('enabled', initConfig.enabled);
+            current.setConfigValue('imageSource', initConfig.imageSource);
+            current.setConfigValue('currentSource', initConfig.currentSource);
+            current.setConfigValue('sourceVersion', initConfig.sourceVersion);
+            current.setConfigValue('sourceUrl', initConfig.sourceUrl);
+            current.setConfigValue('checkSourceVersion', initConfig.checkSourceVersion);
             current.getRealUrl(() => {
                 current.reload();
             });
         }
         else {
             if (current.enabled && current.autoStatus) {
+                if (current.checkSourceVersion) {
+                    current.checkSource();
+                }
                 current.getRealUrl();
             }
         }
@@ -45,32 +69,34 @@ class PickList {
         let config = vscode.workspace.getConfiguration('backgroundOnline');
         var current = new PickList(config);
         if (settings.enabled !== config.enabled || settings.opacity !== config.opacity || settings.currentBg !== config.currentBg
-            || settings.category.name !== config.category.name) {
+            || settings.currentSource.sourceName !== config.currentSource.sourceName
+            || settings.currentSource.parameters !== config.currentSource.parameters) {
             current.setConfigValue('opacity', settings.opacity);
             current.setConfigValue('currentBg', settings.currentBg);
-            current.setConfigValue('category', settings.category);
+            current.setConfigValue('currentSource', settings.currentSource);
             current.setConfigValue('autoStatus', settings.autoStatus);
             if (!settings.enabled) {
                 current.updateDom(true);
                 current.reload();
                 return;
             }
-            current.currentBg = settings.currentBg;
+            // current.currentBg = settings.currentBg
             current.opacity = settings.opacity;
-            current.category = settings.category;
+            current.currentSource = settings.currentSource;
             // 更新分类
-            if (settings.category.name !== config.category.name && settings.currentBg === config.currentBg) {
+            if (settings.currentSource.sourceName !== config.currentSource.sourceName
+                || settings.currentSource.parameters === config.currentSource.parameters) {
                 current.getRealUrl(() => {
                     current.reload();
                 });
             }
             // 手动替换壁纸
-            else if (settings.currentBg !== config.currentBg) {
-                current.pushHistory(config.currentBg);
-                current.currentBg = settings.currentBg;
-                current.updateDom();
-                current.reload();
-            }
+            // else if (settings.currentBg !== config.currentBg) {
+            // 	current.pushHistory(config.currentBg)
+            // 	current.currentBg = settings.currentBg
+            // 	current.updateDom()
+            // 	current.reload();
+            // }
         }
     }
     reload(message = '壁纸配置完成，重新加载生效？') {
@@ -85,46 +111,30 @@ class PickList {
             }
         });
     }
-    // 列表构造方法
-    constructor(config) {
-        this.config = config;
-        this.enabled = config.enabled;
-        this.opacity = config.opacity;
-        this.history = config.history;
-        this.currentBg = config.currentBg;
-        this.configured = config.configured;
-        this.autoStatus = config.autoStatus;
-        this.category = config.category;
-        this.bgApiUrl = config.bgApiUrl;
-        this.bgImgUrlKey = config.bgImgUrlKey;
-    }
     /**
      *
      * @param callback
      */
     getRealUrl(callback = null) {
-        var url = this.bgApiUrl + this.category.parameters;
-        try {
-            (0, node_fetch_1.default)(url).then((res) => __awaiter(this, void 0, void 0, function* () {
-                var data = yield res.json();
-                if (data && data[this.bgImgUrlKey]) {
-                    this.pushHistory(this.currentBg);
-                    var imageUrl = data[this.bgImgUrlKey];
-                    this.setConfigValue('currentBg', imageUrl);
-                    this.currentBg = imageUrl;
-                    this.updateDom();
-                    if (callback) {
-                        callback();
-                    }
+        var url = this.currentSource.baseUrl + this.currentSource.parameters;
+        (0, node_fetch_1.default)(url).then((res) => __awaiter(this, void 0, void 0, function* () {
+            var data = yield res.json();
+            if (data && data[this.currentSource.imgUrlKey]) {
+                this.pushHistory(this.currentBg);
+                var imageUrl = data[this.currentSource.imgUrlKey];
+                this.setConfigValue('currentBg', imageUrl);
+                this.currentBg = imageUrl;
+                this.updateDom();
+                if (callback) {
+                    callback();
                 }
-                else {
-                    vscode.window.showWarningMessage('获取图片地址失败');
-                }
-            }));
-        }
-        catch (_a) {
+            }
+            else {
+                vscode.window.showWarningMessage('获取图片地址失败');
+            }
+        })).catch((err) => {
             vscode.window.showWarningMessage('获取图片地址失败');
-        }
+        });
     }
     // 更新配置
     setConfigValue(name, value) {
@@ -161,6 +171,41 @@ class PickList {
                     break;
             }
         }
+    }
+    checkSource() {
+        var url = this.sourceUrl;
+        (0, node_fetch_1.default)(url).then((res) => __awaiter(this, void 0, void 0, function* () {
+            var data = yield res.json();
+            if (data && data['version'] !== this.sourceVersion) {
+                this.updateSource(data);
+            }
+        })).catch((err) => {
+            debugger;
+        });
+    }
+    updateSource(source) {
+        vscode.window.showInformationMessage('作者发布了最新的数据源，是否更新 The author has published the latest data source, whether updated', "Yes", "No", "Don't remind again")
+            .then(result => {
+            var _a;
+            switch (result) {
+                case "Yes":
+                    const serverSources = ((_a = this.config.imageSource) === null || _a === void 0 ? void 0 : _a.filter((item) => item.sourceType !== 'server')) || [];
+                    // 合并 source 中的 imageSource
+                    const newImageSource = [
+                        ...serverSources,
+                        ...(source.imageSource || [])
+                    ];
+                    this.setConfigValue('imageSource', newImageSource);
+                    this.setConfigValue('currentSource', source.currentSource);
+                    this.setConfigValue('sourceVersion', source.version);
+                    break;
+                case "Don't remind again":
+                    this.setConfigValue('checkSourceVersion', false);
+                    break;
+                default:
+                    break;
+            }
+        });
     }
 }
 exports.PickList = PickList;
