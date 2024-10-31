@@ -1,3 +1,14 @@
+<p align="center">
+支持自定义api地址（JSON格式）,指定json中图片地址key即可自动访问api在线壁纸切换
+<br/>
+祝您有个愉快的心情..
+<br/>
+<a href="https://github.com/HeLinSpace/vscode-online-background">
+<img src="https://img.shields.io/github/stars/HeLinSpace/vscode-online-background" alt="stars">
+</a>
+
+</p>
+
 设置
 ![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/ed1598b6ddb4567096db9b293468b37d0d1b93fc/resources/setting_20230718140813.png)
 
