@@ -17,6 +17,10 @@
         "type": "git",
         "url": "https://github.com/HeLinSpace/vscode-online-background"
     },
+    "changelog": {
+        "type": "markdown",
+        "path": "CHANGELOG.md"
+    },
     "signature": {
         "type": "microsoft",
         "version": "1.0.0"
