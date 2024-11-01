@@ -99,7 +99,7 @@ class PickList {
             // }
         }
     }
-    reload(message = '壁纸配置完成，重新加载生效？') {
+    reload(message = '壁纸配置完成，重新加载生效（reloadWindow后不好使，请手动关闭再打开）？') {
         vscode.window.showInformationMessage(message, "Yes", "No")
             .then(result => {
             switch (result) {
@@ -180,7 +180,6 @@ class PickList {
                 this.updateSource(data);
             }
         })).catch((err) => {
-            debugger;
         });
     }
     updateSource(source) {

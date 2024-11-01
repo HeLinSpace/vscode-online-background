@@ -44,10 +44,6 @@ function activate(context) {
             }
         });
         context.subscriptions.push(startCommand);
-        vscode.extensions.onDidChange(() => {
-            debugger;
-            vscode.window.showInformationMessage('extensions changed!');
-        });
     });
 }
 // this method is called when your extension is deactivated

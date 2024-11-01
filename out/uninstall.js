@@ -74,7 +74,6 @@ const uninstallHelper = {
             }
         }
         catch (error) {
-            debugger;
         }
     }
 };

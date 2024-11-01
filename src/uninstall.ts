@@ -85,7 +85,6 @@ const uninstallHelper = {
                 fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 4), 'utf8');
             }
         } catch (error) {
-            debugger
         }
     }
 }

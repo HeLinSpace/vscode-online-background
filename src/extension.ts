@@ -40,11 +40,6 @@ export async function activate(context: vscode.ExtensionContext) {
 			}
 		});
 	context.subscriptions.push(startCommand);
-
-	vscode.extensions.onDidChange(() => {
-		debugger
-		vscode.window.showInformationMessage('extensions changed!');
-	});
 }
 
 // this method is called when your extension is deactivated

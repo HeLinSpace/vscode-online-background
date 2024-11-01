@@ -24,7 +24,6 @@ export class Settings {
 
 		// Handle messages from the webview
 		Settings.panel.webview.onDidReceiveMessage(message => {
-			debugger
 			switch (message.command) {
 				case 'save':
 					var configs = JSON.parse(message.text);
