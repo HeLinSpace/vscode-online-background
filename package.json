@@ -61,10 +61,6 @@
     ],
     "contributes": {
         "commands": [
-            {
-                "command": "extension.backgroundOnline.start",
-                "title": "background - start"
-            }
         ],
         "keybindings": [
             {
