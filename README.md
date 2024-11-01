@@ -8,18 +8,19 @@
 
 ### 内置壁纸源，不定期更新数据源文件
 ![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/master/resources/source_update.png)
+
+### 设置页面
+![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/master/resources/tool-bar.png)
+#### or use command
+![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/master/resources/tool-bar-command.png)
+
+#### 点击关闭将恢复默认 
+![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/master/resources/setting_20230718140813.png)
 ### 修改背景API
 ![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/master/resources/api_settings1.png)
 ![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/master/resources/api_settings2.png)
 <br/>
 
-### 设置页面
-![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/master/resources/tool-bar.png)
-#### or use Command
-![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/master/resources/tool-bar-command.png)
-
-#### 点击关闭将恢复默认 
-![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/master/resources/setting_20230718140813.png)
 ### settings.json
 ![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/master/resources/setting_json_20230718141150.png)
 
