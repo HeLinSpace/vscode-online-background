@@ -61,14 +61,12 @@
     ],
     "contributes": {
         "commands": [
-        ],
-        "keybindings": [
             {
-                "command": "extension.backgroundOnline.refresh",
-                "key": "ctrl+shift+f7",
-                "when": "editorTextFocus"
+                "command": "extension.backgroundOnline.setting",
+                "title": "background - setting"
             }
         ],
+        "keybindings": [],
         "configuration": {
             "title": "background-online config",
             "properties": {

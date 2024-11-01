@@ -14,10 +14,17 @@
 <br/>
 
 ### 设置页面
+![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/master/resources/tool-bar.png)
+#### or use Command
+![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/master/resources/tool-bar-command.png)
+
 #### 点击关闭将恢复默认 
 ![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/master/resources/setting_20230718140813.png)
 ### settings.json
 ![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/master/resources/setting_json_20230718141150.png)
+
+### 参数说明：
+![image](https://raw.githubusercontent.com/HeLinSpace/vscode-online-background/master/resources/param-about.png)
 
 ### Warns 警告：
 本插件是通过修改 vscode 的 css 文件的方式运行
