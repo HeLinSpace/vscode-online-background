@@ -2,7 +2,7 @@
     "name": "background-online",
     "displayName": "background-online",
     "description": "在线壁纸自动切换，支持自定义API地址；Online wallpaper automatic switching, support for custom API address",
-    "version": "2.0.5",
+    "version": "2.0.6",
     "scripts": {
         "vscode:prepublish": "npm run compile",
         "vscode:uninstall": "node ./out/uninstall",
