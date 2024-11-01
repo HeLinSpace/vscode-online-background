@@ -15,7 +15,6 @@ const vscode = require("vscode");
 const node_fetch_1 = require("node-fetch");
 const FileDom_1 = require("./FileDom");
 const InitConfig_1 = require("./InitConfig");
-// import vsHelp from './vsHelp';
 class PickList {
     // 列表构造方法
     constructor(config) {
@@ -30,6 +29,7 @@ class PickList {
         this.sourceVersion = config.sourceVersion;
         this.sourceUrl = config.sourceUrl;
         this.checkSourceVersion = config.checkSourceVersion;
+        this.imageSource = config.imageSource;
     }
     /**
      *  自动更新背景
@@ -38,17 +38,7 @@ class PickList {
         let config = vscode.workspace.getConfiguration('backgroundOnline');
         var current = new PickList(config);
         if (!current.configured) {
-            // 初始化配置
-            const initConfig = (0, InitConfig_1.getInitConfig)();
-            current.setConfigValue('opacity', initConfig.opacity);
-            current.setConfigValue('configured', initConfig.configured);
-            current.setConfigValue('autoStatus', initConfig.autoStatus);
-            current.setConfigValue('enabled', initConfig.enabled);
-            current.setConfigValue('imageSource', initConfig.imageSource);
-            current.setConfigValue('currentSource', initConfig.currentSource);
-            current.setConfigValue('sourceVersion', initConfig.sourceVersion);
-            current.setConfigValue('sourceUrl', initConfig.sourceUrl);
-            current.setConfigValue('checkSourceVersion', initConfig.checkSourceVersion);
+            current.initConfigValue();
             current.getRealUrl(() => {
                 current.reload();
             });
@@ -61,6 +51,31 @@ class PickList {
                 current.getRealUrl();
             }
         }
+    }
+    // 初始化配置
+    initConfigValue() {
+        const initConfig = (0, InitConfig_1.getInitConfig)();
+        this.setConfigValue('opacity', initConfig.opacity);
+        this.opacity = initConfig.opacity;
+        this.setConfigValue('configured', initConfig.configured);
+        this.configured = initConfig.configured;
+        this.setConfigValue('autoStatus', initConfig.autoStatus);
+        this.autoStatus = initConfig.autoStatus;
+        this.setConfigValue('enabled', initConfig.enabled);
+        this.enabled = initConfig.enabled;
+        this.setConfigValue('checkSourceVersion', initConfig.checkSourceVersion);
+        this.checkSourceVersion = initConfig.checkSourceVersion;
+        this.setConfigValue('sourceVersion', initConfig.sourceVersion);
+        this.sourceVersion = initConfig.sourceVersion;
+        this.setConfigValue('sourceUrl', initConfig.sourceUrl);
+        this.sourceUrl = initConfig.sourceUrl;
+        this.setConfigValue('currentBg', initConfig.currentBg);
+        this.currentBg = initConfig.currentBg;
+        this.setConfigValue('currentSource', initConfig.currentSource);
+        this.currentSource = initConfig.currentSource;
+        this.setConfigValue('imageSource', initConfig.imageSource);
+        this.imageSource = initConfig.imageSource;
+        return true;
     }
     /**
      *  更新背景
@@ -99,7 +114,7 @@ class PickList {
             // }
         }
     }
-    reload(message = '壁纸配置完成，重新加载生效（reloadWindow后不好使，请手动关闭再打开）？') {
+    reload(message = '壁纸配置完成，重新加载生效？ 如果reloadWindow后不好使，请手动关闭Vscode再打开') {
         vscode.window.showInformationMessage(message, "Yes", "No")
             .then(result => {
             switch (result) {
@@ -188,7 +203,7 @@ class PickList {
             var _a;
             switch (result) {
                 case "Yes":
-                    const serverSources = ((_a = this.config.imageSource) === null || _a === void 0 ? void 0 : _a.filter((item) => item.sourceType !== 'server')) || [];
+                    const serverSources = ((_a = this.imageSource) === null || _a === void 0 ? void 0 : _a.filter((item) => item.sourceType !== 'server')) || [];
                     // 合并 source 中的 imageSource
                     const newImageSource = [
                         ...serverSources,

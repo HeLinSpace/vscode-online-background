@@ -6,8 +6,9 @@ interface ImageSourceCategory {
     parameters: string;
 }
 
-interface ImageSource {
+export interface ImageSource {
     sourceName: string;
+    sourceType: string;
     baseUrl: string;
     imgUrlKey: string;
     category: ImageSourceCategory[];
@@ -41,6 +42,7 @@ export function getInitConfig(): Readonly<Config> {
         imageSource: [
             {
                 sourceName: "夏柔",
+                sourceType: "server",
                 baseUrl: "https://www.onexiaolaji.cn/RandomPicture/api/?key=qq249663924&type=json",
                 imgUrlKey: "url",
                 category: [
@@ -64,6 +66,7 @@ export function getInitConfig(): Readonly<Config> {
             },
             {
                 sourceName: "墨天逸",
+                sourceType: "server",
                 baseUrl: "https://api.mtyqx.cn/api/random.php?return=json",
                 imgUrlKey: "imgurl",
                 category: [
@@ -71,6 +74,7 @@ export function getInitConfig(): Readonly<Config> {
             },
             {
                 sourceName: "樱花二次元",
+                sourceType: "server",
                 baseUrl: "https://www.dmoe.cc/random.php?return=json",
                 imgUrlKey: "imgurl",
                 category: [
@@ -78,6 +82,7 @@ export function getInitConfig(): Readonly<Config> {
             },
             {
                 sourceName: "盒子萌",
+                sourceType: "server",
                 baseUrl: "https://api.boxmoe.com/random.php?return=json",
                 imgUrlKey: "imgurl",
                 category: [
@@ -85,6 +90,7 @@ export function getInitConfig(): Readonly<Config> {
             },
             {
                 sourceName: "imgapi",
+                sourceType: "server",
                 baseUrl: "https://imgapi.cn/api.php?zd=pc&gs=json",
                 imgUrlKey: "imgurl",
                 category: [
@@ -105,6 +111,7 @@ export function getInitConfig(): Readonly<Config> {
             },
             {
                 sourceName: "如诗",
+                sourceType: "server",
                 baseUrl: "https://api.likepoems.com/img/",
                 imgUrlKey: "url",
                 category: [
@@ -128,6 +135,7 @@ export function getInitConfig(): Readonly<Config> {
             },
             {
                 sourceName: "Chuanrui二次元",
+                sourceType: "server",
                 baseUrl: "https://api.1314.cool/img/sort/api/api.php?return=json",
                 imgUrlKey: "imgurl",
                 category: [
@@ -135,6 +143,7 @@ export function getInitConfig(): Readonly<Config> {
             },
             {
                 sourceName: "搏天",
+                sourceType: "server",
                 baseUrl: "https://api.btstu.cn/sjbz/api.php?format=json",
                 imgUrlKey: "imgurl",
                 category: [

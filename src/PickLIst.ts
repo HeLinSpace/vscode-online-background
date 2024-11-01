@@ -3,10 +3,7 @@ import * as vscode from 'vscode';
 import fetch from 'node-fetch';
 import { FileDom } from './FileDom';
 import { CategoryItem } from './CategoryItem';
-import { getInitConfig } from './InitConfig'
-
-// import vsHelp from './vsHelp';
-
+import { getInitConfig, ImageSource } from './InitConfig'
 
 export class PickList {
 	public static itemList: PickList | undefined;
@@ -22,6 +19,7 @@ export class PickList {
 
 	// 是否初始化
 	private configured: boolean;
+
 	// 每次启动时自动更换背景
 	private autoStatus: boolean;
 	// 是否启用
@@ -36,6 +34,8 @@ export class PickList {
 	private sourceVersion: string;
 	// 是否检查更新
 	private checkSourceVersion: boolean;
+	// 壁纸源
+	private imageSource: ImageSource[];
 
 	// 列表构造方法
 	private constructor(config: vscode.WorkspaceConfiguration) {
@@ -51,6 +51,7 @@ export class PickList {
 		this.sourceVersion = config.sourceVersion;
 		this.sourceUrl = config.sourceUrl;
 		this.checkSourceVersion = config.checkSourceVersion;
+		this.imageSource = config.imageSource;
 	}
 
 	/**
@@ -59,24 +60,14 @@ export class PickList {
 	public static autoUpdateBackground() {
 		let config = vscode.workspace.getConfiguration('backgroundOnline');
 		var current = new PickList(config)
-
 		if (!current.configured) {
-			// 初始化配置
-			const initConfig = getInitConfig();
 
-			current.setConfigValue('opacity', initConfig.opacity);
-			current.setConfigValue('configured', initConfig.configured);
-			current.setConfigValue('autoStatus', initConfig.autoStatus);
-			current.setConfigValue('enabled', initConfig.enabled);
-			current.setConfigValue('imageSource', initConfig.imageSource);
-			current.setConfigValue('currentSource', initConfig.currentSource);
-			current.setConfigValue('sourceVersion', initConfig.sourceVersion);
-			current.setConfigValue('sourceUrl', initConfig.sourceUrl);
-			current.setConfigValue('checkSourceVersion', initConfig.checkSourceVersion);
+			current.initConfigValue();
 
 			current.getRealUrl(() => {
 				current.reload()
 			});
+
 		} else {
 			if (current.enabled && current.autoStatus) {
 				if (current.checkSourceVersion) {
@@ -85,6 +76,43 @@ export class PickList {
 				current.getRealUrl();
 			}
 		}
+	}
+
+	// 初始化配置
+	private initConfigValue() {
+		const initConfig = getInitConfig();
+
+		this.setConfigValue('opacity', initConfig.opacity);
+		this.opacity = initConfig.opacity;
+
+		this.setConfigValue('configured', initConfig.configured);
+		this.configured = initConfig.configured;
+
+		this.setConfigValue('autoStatus', initConfig.autoStatus);
+		this.autoStatus = initConfig.autoStatus;
+
+		this.setConfigValue('enabled', initConfig.enabled);
+		this.enabled = initConfig.enabled;
+
+		this.setConfigValue('checkSourceVersion', initConfig.checkSourceVersion);
+		this.checkSourceVersion = initConfig.checkSourceVersion;
+
+		this.setConfigValue('sourceVersion', initConfig.sourceVersion);
+		this.sourceVersion = initConfig.sourceVersion;
+
+		this.setConfigValue('sourceUrl', initConfig.sourceUrl);
+		this.sourceUrl = initConfig.sourceUrl;
+
+		this.setConfigValue('currentBg', initConfig.currentBg);
+		this.currentBg = initConfig.currentBg;
+
+		this.setConfigValue('currentSource', initConfig.currentSource);
+		this.currentSource = initConfig.currentSource;
+
+		this.setConfigValue('imageSource', initConfig.imageSource);
+		this.imageSource = initConfig.imageSource;
+
+		return true;
 	}
 
 	/**
@@ -130,7 +158,7 @@ export class PickList {
 		}
 	}
 
-	private reload(message: string = '壁纸配置完成，重新加载生效（reloadWindow后不好使，请手动关闭再打开）？') {
+	private reload(message: string = '壁纸配置完成，重新加载生效？ 如果reloadWindow后不好使，请手动关闭Vscode再打开') {
 		vscode.window.showInformationMessage(message, "Yes", "No")
 			.then(result => {
 				switch (result) {
@@ -225,7 +253,7 @@ export class PickList {
 			.then(result => {
 				switch (result) {
 					case "Yes":
-						const serverSources = this.config.imageSource?.filter(
+						const serverSources = this.imageSource?.filter(
 							(item: any) => item.sourceType !== 'server'
 						) || [];
 
