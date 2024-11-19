@@ -15,12 +15,12 @@ export class Settings {
 		});
 
 		// 修改jQuery路径的获取方式
-		const jqueryPath = Settings.panel.webview.asWebviewUri(
-			vscode.Uri.file(path.join(context.extensionPath, 'out', 'jquery-3.7.0.min.js'))
-		);
+		// const jqueryPath = Settings.panel.webview.asWebviewUri(
+		// 	vscode.Uri.file(path.join(context.extensionPath, 'out', 'jquery-3.7.0.min.js'))
+		// );
 
 		// 设置HTML内容
-		Settings.panel.webview.html = Settings.getWebviewContent(jqueryPath);
+		Settings.panel.webview.html = Settings.getWebviewContent();
 
 		// Handle messages from the webview
 		Settings.panel.webview.onDidReceiveMessage(message => {
@@ -39,7 +39,7 @@ export class Settings {
 		return Settings.panel;
 	}
 
-	public static getWebviewContent(jqueryPathSrc: any) {
+	public static getWebviewContent() {
 
 		let config = vscode.workspace.getConfiguration('backgroundOnline');
 
@@ -120,6 +120,27 @@ export class Settings {
 				tr {
 					line-height: 40px;
 				}
+					
+				.save-button {
+					background-color: #0055ab;
+					color: white;
+					border: none;
+					padding: 8px 16px;
+					border-radius: 4px;
+					cursor: pointer;
+					transition: all 0.3s ease;  /* 添加过渡效果 */
+				}
+
+				.save-button:hover {
+					background-color: #003d7a;  /* 更深的蓝色 */
+					transform: translateY(-1px);  /* 轻微上移效果 */
+					box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);  /* 添加阴影 */
+				}
+
+				.save-button:active {
+					transform: translateY(0);  /* 点击时回到原位 */
+					box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);  /* 减小阴影 */
+				}
 			</style>
 		</head>
 		
@@ -171,97 +192,123 @@ export class Settings {
 					<tr>
 						<td colspan="3">
 							<div style="display: flex;flex-direction: row;justify-content: center;margin-top: 20px;">
-								<button onclick="getData()">保存</button>
+								<button id="saveButton" class="save-button" onclick="saveButtonClick()">保存</button>
 							</div>
 						</td>
 					</tr>
 				</tbody>
 			</table>
 		</body>
-		<script src="${jqueryPathSrc}" type="text/javascript"></script>
 		<script>
 			const imageSource = ${JSON.stringify(config.imageSource)};
 			const vscode = acquireVsCodeApi();
+
+			function saveButtonClick() {
+				var currentSource = {
+					"sourceName": "",
+					"baseUrl": "",
+					"imgUrlKey": "",
+					"category": "",
+					"parameters": ""
+				};
+
+				try{
+					// 获取选中的 source
+					var selectedValue = document.getElementById('imageSource').value;
+
+					var selectedSourceObj = imageSource.find(source => source.sourceName === selectedValue);
+					if (selectedSourceObj) {
+						currentSource.sourceName = selectedSourceObj.sourceName
+						currentSource.baseUrl = selectedSourceObj.baseUrl
+						currentSource.imgUrlKey = selectedSourceObj.imgUrlKey
+					}
+					var selectedRadio = document.querySelector('input[name=category]:checked');
+					if (selectedRadio) {
+						var labelElement = selectedRadio.nextElementSibling;
+						if (labelElement && labelElement.tagName.toLowerCase() === 'label') {
+							currentSource.category = labelElement.textContent.trim();
+						}
+						currentSource.parameters = selectedRadio.value
+					}
+					
+					var data = {
+						opacity: parseFloat(document.getElementById('opacity').value),
+						autoStatus: document.querySelector('input[name=autoStatus]:checked').value === "true",
+						enabled: document.querySelector('input[name=enabled]:checked').value === "true",
+						currentSource: currentSource
+					}
+
+					vscode.postMessage({
+						command: 'save',
+						text: JSON.stringify(data)
+					});
+				}catch(ex){
+					// vscode.postMessage({
+					// 	command: 'test',
+					// 	text: ex.message
+					// });
+				}
+			}
+
+			
 			function handleSourceChange(select) {
 				const selectedValue = select.value;
 				const selectedSource = imageSource.find(source => source.sourceName === selectedValue);
-				
 
 				// 生成新的 radio HTML
 				let categoryHtml = '';
-					
+
 				if (selectedSource && selectedSource.category && selectedSource.category.length > 0) {
 					selectedSource.category.forEach((cat, index) => {
 						// 第一个选项添加 checked 属性
 						const checked = index === 0 ? 'checked' : '';
-						categoryHtml += \`<input type="radio" name="category" value="\${cat.parameters}" \${checked} /><label>\${cat.name}</label>\`;
+						categoryHtml += '<input type="radio" name="category" value="' + cat.parameters + '" ' + checked + ' /><label>' + cat.name + '</label>';
 					});
 
-					categoryHtml = \`<td align="right">壁纸类型：</td><td width="20px"></td><td id="categoryList_td">\${categoryHtml}</td>\`
+					categoryHtml = '<td align="right">壁纸类型：</td><td width="20px"></td><td id="categoryList_td">' + categoryHtml + '</td>'
 				}
-				
+
 				// 更新 categoryList_td 的内容
 				const categoryTr = document.getElementById('categoryList_tr');
 				if (categoryTr) {
 					categoryTr.innerHTML = categoryHtml;
 				}
+				vscode.postMessage({
+					command: 'test',
+					text: categoryTr.innerHTML
+				});
 			}
 
-			function getData() {
-				var currentSource = {
-                        "sourceName": "",
-                        "baseUrl": "",
-                        "imgUrlKey": "",
-                        "category": "",
-                        "parameters": ""
-                    };
-				
-				// 获取选中的 source
-				var selectedValue = $('#imageSource option:selected').val();
+			function handleClick(radio) {
+				const isEnabled = radio.value === "true";
+    
+				// 获取所有需要控制的元素
+				const autoStatusInputs = document.querySelectorAll('input[name=autoStatus]');
+				const imageSourceSelect = document.getElementById('imageSource');
+				const categoryInputs = document.querySelectorAll('input[name=category]');
+				const opacityInput = document.getElementById('opacity');
 
-				var selectedSourceObj = imageSource.find(source => source.sourceName === selectedValue);
-				if (selectedSourceObj){
-					currentSource.sourceName = selectedSourceObj.sourceName
-					currentSource.baseUrl = selectedSourceObj.baseUrl
-					currentSource.imgUrlKey = selectedSourceObj.imgUrlKey
-				}
-				
-				var selectedRadio = $('input[name=category]:checked');
-				if (selectedRadio.length > 0) {
-					currentSource.category = selectedRadio.next().text().trim()
-					currentSource.parameters = selectedRadio.val()
-				}
-
-				var data = {
-					opacity: parseFloat($('#opacity').val()),
-					autoStatus: $('input[name=autoStatus]:checked').val() === "true" ? true : false,
-					enabled: $('input[name=enabled]:checked').val() === "true" ? true : false,
-					currentSource: currentSource
-				}
-
-				vscode.postMessage({
-					command: 'save',
-					text: JSON.stringify(data)
+				// 设置 autoStatus radio buttons
+				autoStatusInputs.forEach(input => {
+					input.disabled = !isEnabled;
 				});
+
+				// 设置 imageSource select
+				if (imageSourceSelect) {
+					imageSourceSelect.disabled = !isEnabled;
+				}
+
+				// 设置 category radio buttons
+				categoryInputs.forEach(input => {
+					input.disabled = !isEnabled;
+				});
+
+				// 设置 opacity number input
+				if (opacityInput) {
+					opacityInput.readOnly = !isEnabled;
+				}
 			}
 			
-			function handleClick(radio) {
-				const isEnabled = radio.value === "true";  // 改用布尔值判断
-				const elements = [
-					$('input[name=autoStatus]'),
-					$('select[name=imageSource]'),
-					$('input[name=category]'),
-					$('#opacity')
-				];
-				
-				elements.forEach(el => {
-					if (el.is('input[type=number]')) {
-						el.prop('readOnly', !isEnabled);
-					} else {
-						el.prop('disabled', !isEnabled);
-					}
-				});
-			}
 		</script>
 		
 		</html>`;
